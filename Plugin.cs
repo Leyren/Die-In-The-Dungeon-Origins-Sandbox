@@ -4,6 +4,7 @@ using HarmonyLib;
 using MEC;
 using System;
 using System.Collections.Generic;
+using System.Transactions;
 using System.Xml.Schema;
 using UnityEngine;
 using UnityEngine.UI;
@@ -54,6 +55,76 @@ public class Plugin : BaseUnityPlugin
     }
 }
 
+public class Widget
+{
+
+    private Func<bool> enabledIf;
+    protected bool _enabled = true;
+
+    public Widget()
+    {
+    }
+
+    public virtual void Update()
+    {
+        if (enabledIf != null)
+        {
+            _enabled = enabledIf.Invoke();
+        }
+    }
+
+    public Widget EnabledIf(Func<bool> predicate)
+    {
+        enabledIf = predicate;
+        return this;
+    }
+}
+
+public class ModificationWidget<T> : Widget
+{
+
+    private readonly Func<string> retrieveData;
+    private readonly Text currentData;
+    private readonly ButtonRef applyButton;
+
+    public ModificationWidget(string name, GameObject parent, string title, T defaultValue, Action<T> applyModification, Func<string> retrieveData = null, Func<T, T> validateInput = null)
+    {
+        GameObject container = UIFactory.CreateHorizontalGroup(parent, $"{name}-horizontal", false, false, true, true);
+        Text description = UIFactory.CreateLabel(container, $"{name}-title", title);
+        UIFactory.SetLayoutElement(description.gameObject, minWidth: 100, minHeight: 25);
+        InputFieldRef input = UIFactory.CreateInputField(container, $"{name}-input", defaultValue.ToString());
+        UIFactory.SetLayoutElement(input.GameObject, minWidth: 100, minHeight: 25);
+        applyButton = UIFactory.CreateButton(container, $"{name}-button", "Apply");
+        UIFactory.SetLayoutElement(applyButton.GameObject, minWidth: 200, minHeight: 25);
+
+        this.retrieveData = retrieveData;
+        if (retrieveData != null)
+        {
+            string textId = $"{name}-text";
+            currentData = UIFactory.CreateLabel(container, textId, "N/A");
+            UIFactory.SetLayoutElement(currentData.gameObject, minWidth: 100, minHeight: 25);
+        }
+
+        applyButton.OnClick = () =>
+        {
+            if (ParseUtility.TryParse<T>(input.Text, out var v, out var e))
+            {
+                v = validateInput != null ? validateInput.Invoke(v) : v;
+                input.Text = v.ToString();
+                applyModification.Invoke(v);
+            }
+        };
+    }
+
+    public override void Update()
+    {
+        base.Update();
+        applyButton.Component.interactable = _enabled;
+        if (!_enabled) return;
+        if (retrieveData != null) currentData.text = retrieveData.Invoke();
+    }
+}
+
 public class MyPanel : UniverseLib.UI.Panels.PanelBase
 {
     public MyPanel(UIBase owner) : base(owner) { }
@@ -65,10 +136,22 @@ public class MyPanel : UniverseLib.UI.Panels.PanelBase
     public override Vector2 DefaultAnchorMax => new(0.75f, 0.75f);
     public override bool CanDragAndResize => true;
 
+    private List<Widget> widgets = new();
+
     protected override void ConstructPanelContent()
     {
-        AddModifierWidget("max-dice", "Modify Maximum Dice in Hand by", 0, (v) => Data.MaxDiceInHandModifier = v, () => GameManager.IsInitialized && GameManager.Instance.IsGamePlaying() ? DiceManager.Instance.MaxDiceInHand().ToString() : "N/A");
-        AddModifierWidget("max-health", "Modify Max Health by", 0, (v) => FloorSystem.Instance.Player.ChangeMaxHealthWithVariation(v), () => GameManager.IsInitialized && GameManager.Instance.IsGamePlaying() ? FloorSystem.Instance.Player.MaxHealth.ToString() : "N/A");
+
+        widgets.Add(new ModificationWidget<int>("max-dice", ContentRoot, "Modify Max. Dice in Hand by", 0,
+            (v) => Data.MaxDiceInHandModifier = v,
+            () => DiceManager.Instance.MaxDiceInHand().ToString(),
+            (v) => Math.Max(0, v))
+            .EnabledIf(() => GameManager.IsInitialized && GameManager.Instance.IsGamePlaying()));
+        widgets.Add(new ModificationWidget<int>("max-health", ContentRoot, "Modify Max Health by", 0, 
+            (v) => FloorSystem.Instance.Player.ChangeMaxHealthWithVariation(v), 
+            () => FloorSystem.Instance.Player.MaxHealth.ToString(),
+            (v) => Math.Max(0, v))
+            .EnabledIf(() => GameManager.IsInitialized && GameManager.Instance.IsGamePlaying())
+           );
         AddButtonToggle("Invulnerable", (v) => Data.Invulnerable = v);
         AddButtonToggle("Force Kill", (v) => Data.ForceKill = v);
         AddButton("Dice Upgrade Menu", () => {
@@ -111,10 +194,9 @@ public class MyPanel : UniverseLib.UI.Panels.PanelBase
 
     public void Update()
     {
-        Plugin.Log.LogInfo(FloorSystem.Instance.battle.CurrentTurnState);
-        foreach (var binding in dataBindings.Values)
+        foreach (var binding in widgets)
         {
-            binding.Invoke();
+            binding.Update();
         }
     }
 
