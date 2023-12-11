@@ -3,12 +3,14 @@ using BepInEx.Logging;
 using DG.Tweening;
 using DieInTheDungeonOriginsSandbox.UI;
 using HarmonyLib;
+using JetBrains.Annotations;
 using MEC;
 using System;
 using System.Collections.Generic;
 using System.Transactions;
 using System.Xml.Schema;
 using UnityEngine;
+using UnityEngine.PlayerLoop;
 using UnityEngine.UI;
 using UniverseLib;
 using UniverseLib.UI;
@@ -50,6 +52,15 @@ public class Plugin : BaseUnityPlugin
     private void OnUIInitialized()
     {
         UIBase = UniversalUI.RegisterUI("leyren.dieinthedungeons", UpdateUI);
+    }
+
+    void Update()
+    {
+        if (Data.RelicSelectorLayoutRect != null)
+        {
+            float value = Input.GetKey(KeyCode.RightArrow) ? -1 : Input.GetKey(KeyCode.LeftArrow) ? 1 : 0;
+            Data.RelicSelectorLayoutRect.Translate(Vector2.right * value * 0.2f);
+        }
     }
 
     void UpdateUI()

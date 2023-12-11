@@ -130,8 +130,25 @@ namespace DieInTheDungeonOriginsSandbox
             var dice = new ActiveDice(diceData, FloorSystem.Instance.Player);
             DiceManager.Instance.ObtainNewDice(dice);
         }
+        public static List<RelicData> GetAllRelics()
+        {
+            FieldInfo field = typeof(Relics).GetField("allRelicsAndCurses", BindingFlags.NonPublic | BindingFlags.Instance);
+            List<RelicData> relics = new((List<RelicData>)field.GetValue(Relics.Instance));
+            return relics.OrderBy(e => e.rarity).ToList();
+        }
 
-        public static void GetNiceDice(DiceData diceData)
+        public static void OpenRelicSelector()
+        {
+            var allRelics = GetAllRelics();
+            CanvasManager.Instance.relicSelector.ShowRelicsFromThisPool(allRelics, allRelics.Count, (v) => {
+                Plugin.Log.LogInfo("Reset RelicSelectorLayoutRect");
+                Data.RelicSelectorLayoutRect.localPosition = Vector3.zero;
+                Data.RelicSelectorLayoutRect = null;
+            });
+            Data.RelicSelectorLayoutRect = CanvasManager.Instance.relicSelector.layoutRT;
+        }
+
+        public static void GetSelectedDice(DiceData diceData)
         {
             var dice = new ActiveDice(diceData, FloorSystem.Instance.Player);
             DiceManager.Instance.ObtainNewDice(dice);
