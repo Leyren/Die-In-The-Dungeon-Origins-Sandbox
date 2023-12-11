@@ -2,7 +2,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
+using UnityEngine;
+using UnityEngine.UI;
+using UniverseLib.UI;
 
 namespace DieInTheDungeonOriginsSandbox
 {
@@ -111,6 +115,26 @@ namespace DieInTheDungeonOriginsSandbox
             {
                 Timing.RunCoroutine(diceManager._DrawDiceToHand());
             }
+        }
+
+        public static List<DiceData> GetAllDices()
+        {
+            FieldInfo field = typeof(DiceManager).GetField("allDice", BindingFlags.NonPublic | BindingFlags.Instance);
+            List<DiceData> dices = new((List<DiceData>)field.GetValue(DiceManager.Instance));
+            return dices.OrderBy(e => e.GetType()).ThenBy(e => e.tier).ThenBy(e => e.rarity).ToList();
+        }
+
+        public static void GetRandomDice()
+        {
+            var diceData = DiceManager.Instance.GetMultipleRandomDice(1)[0];
+            var dice = new ActiveDice(diceData, FloorSystem.Instance.Player);
+            DiceManager.Instance.ObtainNewDice(dice);
+        }
+
+        public static void GetNiceDice(DiceData diceData)
+        {
+            var dice = new ActiveDice(diceData, FloorSystem.Instance.Player);
+            DiceManager.Instance.ObtainNewDice(dice);
         }
 
     }

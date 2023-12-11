@@ -43,6 +43,8 @@ namespace DieInTheDungeonOriginsSandbox.UI
             widgets.Add(new ToggleWidget(ContentRoot, "Force Kill", (v) => Data.ForceKill = v));
             AddButton("Dice Upgrade Menu", CheatActions.OpenDiceUpgradeMenu);
             AddButton("Upgrade All Dices", CheatActions.UpgradeAllDices);
+            AddButton("Get Random Dice", () => CheatActions.GetRandomDice());
+            widgets.Add(new DropdownWidget<DiceData>(ContentRoot, "Add Dice", CheatActions.GetAllDices().ToArray(), d => d.ToString(), CheatActions.GetNiceDice));
         }
 
         override public void Update()

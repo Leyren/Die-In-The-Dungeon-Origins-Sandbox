@@ -50,12 +50,20 @@ public class Plugin : BaseUnityPlugin
     private void OnUIInitialized()
     {
         UIBase = UniversalUI.RegisterUI("leyren.dieinthedungeons", UpdateUI);
-        panel = new CheatPanel(UIBase);
     }
 
     void UpdateUI()
     {
-        panel.Update();
+        if (panel == null && PluginUtil.IsGamePlaying())
+        {
+            Plugin.Log.LogInfo("Initialized Cheat Panel");
+            panel = new CheatPanel(UIBase);
+        }
+
+        if (panel != null)
+        {
+            panel.Update();
+        }
     }
 }
 
