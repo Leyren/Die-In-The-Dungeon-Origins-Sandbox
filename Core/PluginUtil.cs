@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace DieInTheDungeonOriginsSandbox
+namespace DieInTheDungeonOriginsSandbox.Core
 {
     public static class PluginUtil
     {

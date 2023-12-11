@@ -23,7 +23,7 @@ namespace DieInTheDungeonOriginsSandbox.UI.Widgets
             UIFactory.SetLayoutElement(description.gameObject, minWidth: WIDTH_LONG, minHeight: ROW_HEIGHT);
 
             InputFieldRef input = CreateInputField(container, $"{name}-input", defaultValue.ToString());
-            applyButton = CreateButton(container, $"{name}-button", "Apply");
+            applyButton = CreateButton(container, "Apply", w: WIDTH_MEDIUM);
 
             this.retrieveData = retrieveData;
             if (retrieveData != null)
@@ -42,6 +42,7 @@ namespace DieInTheDungeonOriginsSandbox.UI.Widgets
                     applyModification.Invoke(v);
                 }
             };
+            _widgetRoot = container;
         }
 
         public override void Update()

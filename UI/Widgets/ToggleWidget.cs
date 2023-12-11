@@ -6,6 +6,7 @@ using UniverseLib.UI;
 using UnityEngine;
 using UnityEngine.UI;
 using static DieInTheDungeonOriginsSandbox.UI.PluginUI;
+using System.ComponentModel;
 
 namespace DieInTheDungeonOriginsSandbox.UI.Widgets
 {
@@ -16,7 +17,7 @@ namespace DieInTheDungeonOriginsSandbox.UI.Widgets
         public ToggleWidget(GameObject parent, string name, Action<bool> onToggle)
         {
             bool toggle = false;
-            button = CreateButton(parent, name, name);
+            button = CreateButton(parent, name);
             var baseColor = button.Component.image.color;
 
             button.OnClick = () =>
@@ -25,6 +26,7 @@ namespace DieInTheDungeonOriginsSandbox.UI.Widgets
                 button.Component.image.color = toggle ? Color.green : baseColor;
                 onToggle.Invoke(toggle);
             };
+            _widgetRoot = button.GameObject;
         }
 
         protected override void UpdateEditable()

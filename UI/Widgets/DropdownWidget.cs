@@ -23,8 +23,10 @@ namespace DieInTheDungeonOriginsSandbox.UI.Widgets
             UIFactory.CreateDropdown(container, $"{name}-dropdown", out var dropdown, stringOptions[0], 12, (i) => { selectedIndex = i; }, defaultOptions: stringOptions);
             UIFactory.SetLayoutElement(dropdown.gameObject, minWidth: WIDTH_LONG, minHeight: ROW_HEIGHT);
 
-            var applyButton = PluginUI.CreateButton(container, $"{name}-button", name);
+            var applyButton = PluginUI.CreateButton(container, name);
             applyButton.OnClick = () => onAction(options[selectedIndex]);
+
+            _widgetRoot = container;
         }
 
     }

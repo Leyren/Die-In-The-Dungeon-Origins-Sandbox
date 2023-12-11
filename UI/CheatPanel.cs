@@ -6,6 +6,7 @@ using UniverseLib.UI.Models;
 using UniverseLib.UI;
 using UnityEngine;
 using DieInTheDungeonOriginsSandbox.UI.Widgets;
+using DieInTheDungeonOriginsSandbox.Components;
 
 namespace DieInTheDungeonOriginsSandbox.UI
 {
@@ -20,50 +21,22 @@ namespace DieInTheDungeonOriginsSandbox.UI
         public override Vector2 DefaultAnchorMax => new(0.75f, 0.75f);
         public override bool CanDragAndResize => true;
 
-        private readonly List<Widget> widgets = new();
+        private readonly List<PluginComponent> components = [];
 
         protected override void ConstructPanelContent()
         {
-
-            widgets.Add(new ModificationWidget<int>("max-dice", ContentRoot, "Modify Max. Dice in Hand by", 0,
-                applyModification: CheatActions.ModifyMaxDiceInHandBy,
-                retrieveData: () => CheatActions.GetMaxDiceInHand().ToString(),
-                validateInput: PluginUtil.NonNegativeInput)
-                .EnabledIf(PluginUtil.IsGamePlaying)
-                );
-
-            widgets.Add(new ModificationWidget<int>("max-health", ContentRoot, "Modify Max Health by", 0,
-                applyModification: CheatActions.ModifyMaxHealthBy,
-                retrieveData: () => CheatActions.GetMaxHealth().ToString(),
-                validateInput: PluginUtil.NonNegativeInput)
-                .EnabledIf(PluginUtil.IsGamePlaying)
-               );
-
-            widgets.Add(new ToggleWidget(ContentRoot, "Invulnerable", (v) => Data.Invulnerable = v));
-            widgets.Add(new ToggleWidget(ContentRoot, "Force Kill", (v) => Data.ForceKill = v));
-            AddButton("Dice Upgrade Menu", CheatActions.OpenDiceUpgradeMenu);
-            AddButton("Upgrade All Dices", CheatActions.UpgradeAllDices);
-            AddButton("Get Random Dice", CheatActions.GetRandomDice);
-            AddButton("Get Random Relic", CheatActions.OpenRelicSelector);
-            widgets.Add(new DropdownWidget<DiceData>(ContentRoot, "Add Dice", CheatActions.GetAllDices().ToArray(), d => d.ToString(), CheatActions.GetSelectedDice));
+            components.Add(new StatModifierComponent(ContentRoot));
+            components.Add(new CombatTogglesComponent(ContentRoot));
+            components.Add(new RelicSelectorComponent(ContentRoot));
+            components.Add(new DiceComponent(ContentRoot));
         }
 
         override public void Update()
         {
-            foreach (var binding in widgets)
+            foreach (var component in components)
             {
-                binding.Update();
+                component.Update();
             }
         }
-
-        private void AddButton(string name, Action onClick)
-        {
-            ButtonRef b = UIFactory.CreateButton(ContentRoot, name, name);
-            UIFactory.SetLayoutElement(b.GameObject, minWidth: 200, minHeight: 25);
-            b.OnClick = onClick;
-        }
-
-
-
     }
 }

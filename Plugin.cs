@@ -1,6 +1,7 @@
 ﻿using BepInEx;
 using BepInEx.Logging;
 using DG.Tweening;
+using DieInTheDungeonOriginsSandbox.Core;
 using DieInTheDungeonOriginsSandbox.UI;
 using HarmonyLib;
 using JetBrains.Annotations;
@@ -56,11 +57,6 @@ public class Plugin : BaseUnityPlugin
 
     void Update()
     {
-        if (Data.RelicSelectorLayoutRect != null)
-        {
-            float value = Input.GetKey(KeyCode.RightArrow) ? -1 : Input.GetKey(KeyCode.LeftArrow) ? 1 : 0;
-            Data.RelicSelectorLayoutRect.Translate(Vector2.right * value * 0.2f);
-        }
     }
 
     void UpdateUI()

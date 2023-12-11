@@ -8,33 +8,13 @@ using UnityEngine;
 using UnityEngine.UI;
 using UniverseLib.UI;
 
-namespace DieInTheDungeonOriginsSandbox
+namespace DieInTheDungeonOriginsSandbox.Core
 {
     /// <summary>
     /// Additional layer of abstraction to act as kind of an 'API' between plugin code and game code.
     /// </summary>
     public static class CheatActions
     {
-
-        public static int GetMaxDiceInHand()
-        {
-            return DiceManager.Instance.MaxDiceInHand();
-        }
-
-        public static void ModifyMaxDiceInHandBy(int amount)
-        {
-            Data.MaxDiceInHandModifier += amount;
-        }
-
-        public static void ModifyMaxHealthBy(int amount)
-        {
-            FloorSystem.Instance.Player.ChangeMaxHealthWithVariation(amount);
-        }
-
-        public static int GetMaxHealth()
-        {
-            return FloorSystem.Instance.Player.MaxHealth;
-        }
 
         public static void OpenDiceUpgradeMenu()
         {
@@ -129,23 +109,6 @@ namespace DieInTheDungeonOriginsSandbox
             var diceData = DiceManager.Instance.GetMultipleRandomDice(1)[0];
             var dice = new ActiveDice(diceData, FloorSystem.Instance.Player);
             DiceManager.Instance.ObtainNewDice(dice);
-        }
-        public static List<RelicData> GetAllRelics()
-        {
-            FieldInfo field = typeof(Relics).GetField("allRelicsAndCurses", BindingFlags.NonPublic | BindingFlags.Instance);
-            List<RelicData> relics = new((List<RelicData>)field.GetValue(Relics.Instance));
-            return relics.OrderBy(e => e.rarity).ToList();
-        }
-
-        public static void OpenRelicSelector()
-        {
-            var allRelics = GetAllRelics();
-            CanvasManager.Instance.relicSelector.ShowRelicsFromThisPool(allRelics, allRelics.Count, (v) => {
-                Plugin.Log.LogInfo("Reset RelicSelectorLayoutRect");
-                Data.RelicSelectorLayoutRect.localPosition = Vector3.zero;
-                Data.RelicSelectorLayoutRect = null;
-            });
-            Data.RelicSelectorLayoutRect = CanvasManager.Instance.relicSelector.layoutRT;
         }
 
         public static void GetSelectedDice(DiceData diceData)

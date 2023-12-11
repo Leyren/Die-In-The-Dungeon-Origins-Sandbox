@@ -13,14 +13,14 @@ namespace DieInTheDungeonOriginsSandbox.UI
 {
     internal static class PluginUI
     {
-        public const int WIDTH_LONG = 200;
+        public const int WIDTH_LONG = 250;
         public const int WIDTH_MEDIUM = 100;
         public const int WIDTH_SMALL = 50;
         public const int ROW_HEIGHT = 25;
 
-        public static ButtonRef CreateButton(GameObject parent, string name, string text, int w = WIDTH_MEDIUM, int h = ROW_HEIGHT)
+        public static ButtonRef CreateButton(GameObject parent, string text, int w = WIDTH_LONG, int h = ROW_HEIGHT, Action onClick = null)
         {
-            var button = UIFactory.CreateButton(parent, name, text);
+            var button = UIFactory.CreateButton(parent, text, text);
             UIFactory.SetLayoutElement(button.GameObject, minWidth: w, minHeight: h);
 
             Color baseColor = new(0.25f, 0.25f, 0.25f);
@@ -33,6 +33,7 @@ namespace DieInTheDungeonOriginsSandbox.UI
                 colorMultiplier = 1
             };
             button.Component.colors = cb;
+            button.OnClick = onClick;
             
             return button;
         }
