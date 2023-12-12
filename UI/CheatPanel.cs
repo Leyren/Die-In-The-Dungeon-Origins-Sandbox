@@ -10,6 +10,7 @@ using DieInTheDungeonOriginsSandbox.Components;
 using System.ComponentModel;
 using UnityEngine.UI;
 using static DeckData;
+using DieInTheDungeonSandbox.Core;
 
 namespace DieInTheDungeonOriginsSandbox.UI
 {
@@ -43,7 +44,7 @@ namespace DieInTheDungeonOriginsSandbox.UI
 
         protected override void ConstructPanelContent()
         {
-           GameObject scrollObj = UIFactory.CreateScrollView(ContentRoot, "root-scroll-view", out var container, out var Scrollbar, color: PluginUI.BACKGROUND_COLOR);
+           GameObject scrollObj = UIFactory.CreateScrollView(ContentRoot, "root-scroll-view", out var container, out var Scrollbar, color: UIUtil.BACKGROUND_COLOR);
 
             UIFactory.SetLayoutElement(scrollObj, minHeight: 250, preferredHeight: 300, flexibleHeight: 9999, flexibleWidth: 9999);
             UIFactory.SetLayoutGroup<VerticalLayoutGroup>(container, spacing: 5, padTop: 5, padBottom: 5, padLeft: 5, padRight: 5);

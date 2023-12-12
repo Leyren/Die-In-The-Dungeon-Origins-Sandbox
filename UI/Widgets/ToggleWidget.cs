@@ -5,7 +5,7 @@ using UniverseLib.UI.Models;
 using UniverseLib.UI;
 using UnityEngine;
 using UnityEngine.UI;
-using static DieInTheDungeonOriginsSandbox.UI.PluginUI;
+using static DieInTheDungeonSandbox.Core.UIUtil;
 using System.ComponentModel;
 
 namespace DieInTheDungeonOriginsSandbox.UI.Widgets

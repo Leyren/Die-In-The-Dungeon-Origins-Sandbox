@@ -58,15 +58,20 @@ public class Plugin : BaseUnityPlugin
     {
     }
 
+    private bool autoReopen = false;
+
     void UpdateUI()
     {
         if (panel != null && panel.Enabled && !PluginUtil.IsGamePlaying())
         {
             panel.SetActive(false);
+            autoReopen = true;
+            EventSystem.current.SetSelectedGameObject(panel.UIRoot);
         }
 
         if (PluginUtil.IsGamePlaying())
         {
+            // Plugin.Log.LogInfo(FloorSystem.Instance.battle.CurrentTurnState);
             if (panel == null)
             {
                 // Initialization
@@ -75,7 +80,7 @@ public class Plugin : BaseUnityPlugin
                 panel.SetActive(false);
                 if (PluginConfig.ShowButton)
                 {
-                    toggleButton = CreateToggleButton();
+                    toggleButton = UIUtil.CreateToggleButton(UIBase, panel);
                 }
             }
 
@@ -84,6 +89,10 @@ public class Plugin : BaseUnityPlugin
             if (panel.Enabled)
             {
                 panel.Update();
+            } else if (autoReopen)
+            {
+                autoReopen = false;
+                panel.SetActive(true);
             }
 
             if (Input.GetKeyDown(PluginConfig.Hotkey))
@@ -91,37 +100,6 @@ public class Plugin : BaseUnityPlugin
                 panel.Toggle();
             }
         }
-    }
-
-    public GameObject CreateToggleButton()
-    {
-        GameObject container = UIFactory.CreateHorizontalGroup(UIBase.RootObject, $"{name}-horizontal", true, true, true, true, spacing: 5, padding: new Vector4(0, 5, 5, 5));
-
-        // Add a content size fitter to adjust the size based on the containing button
-        var fitter = container.AddComponent<ContentSizeFitter>();
-        fitter.horizontalFit = ContentSizeFitter.FitMode.MinSize;
-        fitter.verticalFit = ContentSizeFitter.FitMode.MinSize;
-        var rect = container.GetComponent<RectTransform>();
-
-        // move to top center
-        rect.anchorMin = new Vector2(0.5f, 1);
-        rect.anchorMax = new Vector2(0.5f, 1);
-        rect.pivot = new Vector2(0.5f, 1);
-        rect.anchoredPosition = new Vector2(0, 0);
-
-        var button = PluginUI.CreateButton(container, $"Open Sandbox ({PluginConfig.Hotkey})", w: 175, h: 25, overrideColor: new Color(0.5f, 0.5f, 0.5f));
-        button.Component.image.color = Color.red;
-
-        // If button clicked, enable the panel, and if the panel closes, enable the button
-        button.OnClick = () =>
-        {
-            panel.SetActive(true); 
-            // Change focus to panel to make sure button is not in focus anymore
-            EventSystem.current.SetSelectedGameObject(panel.UIRoot);
-            container.SetActive(false);
-        }; 
-
-        return container;
     }
 
 }

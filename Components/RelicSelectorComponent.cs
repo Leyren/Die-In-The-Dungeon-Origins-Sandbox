@@ -1,5 +1,5 @@
-﻿using DieInTheDungeonOriginsSandbox.UI;
-using DieInTheDungeonOriginsSandbox.UI.Widgets;
+﻿using DieInTheDungeonOriginsSandbox.UI.Widgets;
+using DieInTheDungeonSandbox.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,9 +21,9 @@ namespace DieInTheDungeonOriginsSandbox.Components
 
         private void InitializeUI()
         {
-            GameObject container = PluginUI.CreateSimpleHorizontalLayout(_panelRoot);
-            PluginUI.CreateButton(container, "Open Relic Selection", onClick: OpenRelicSelector);
-            PluginUI.CreateButton(container, "Get All Relics", onClick: ObtainAllRelics);
+            GameObject container = UIUtil.CreateSimpleHorizontalLayout(_panelRoot);
+            UIUtil.CreateButton(container, "Open Relic Selection", onClick: OpenRelicSelector);
+            UIUtil.CreateButton(container, "Get All Relics", onClick: ObtainAllRelics);
         }
 
         public override void Update()

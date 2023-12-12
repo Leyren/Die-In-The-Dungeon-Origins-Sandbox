@@ -1,5 +1,5 @@
 ﻿using DieInTheDungeonOriginsSandbox.Core;
-using DieInTheDungeonOriginsSandbox.UI;
+using DieInTheDungeonSandbox.Core;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -17,7 +17,7 @@ namespace DieInTheDungeonOriginsSandbox.Components
             var name = GetType().Name;
 
             // Create panel for this component
-            UIFactory.CreatePanel($"{name}-root", parent, out var contentHolder, bgColor: PluginUI.PANEL_COLOR);
+            UIFactory.CreatePanel($"{name}-root", parent, out var contentHolder, bgColor: UIUtil.PANEL_COLOR);
             var layout = contentHolder.GetComponent<VerticalLayoutGroup>();
             layout.childControlHeight = true;
             layout.childControlWidth = true;
@@ -39,7 +39,7 @@ namespace DieInTheDungeonOriginsSandbox.Components
             GameObject obj = UIFactory.CreateUIObject($"{name}-separator", _panelRoot);
             UIFactory.SetLayoutElement(obj, minHeight: 1, preferredHeight: 1, flexibleWidth: 9999);
             Image img = obj.AddComponent<Image>();
-            img.color = PluginUI.BACKGROUND_COLOR;
+            img.color = UIUtil.BACKGROUND_COLOR;
 
             UIFactory.CreateUIObject("spacer", _panelRoot);
             UIFactory.CreateUIObject("spacer", _panelRoot);

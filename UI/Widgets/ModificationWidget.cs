@@ -5,8 +5,9 @@ using UnityEngine.UI;
 using UnityEngine;
 using UniverseLib.UI.Models;
 using UniverseLib.UI;
-using static DieInTheDungeonOriginsSandbox.UI.PluginUI;
+using static DieInTheDungeonSandbox.Core.UIUtil;
 using UniverseLib.Utility;
+using DieInTheDungeonSandbox.Core;
 
 namespace DieInTheDungeonOriginsSandbox.UI.Widgets
 {
@@ -18,7 +19,7 @@ namespace DieInTheDungeonOriginsSandbox.UI.Widgets
 
         public ModificationWidget(string name, GameObject parent, string title, T defaultValue, Action<T> applyModification, Func<string> retrieveData = null, Func<T, T> validateInput = null)
         {
-            GameObject container = PluginUI.CreateSimpleHorizontalLayout(parent, $"{name}-horizontal");
+            GameObject container = UIUtil.CreateSimpleHorizontalLayout(parent, $"{name}-horizontal");
 
             Text description = UIFactory.CreateLabel(container, $"{name}-title", title);
             UIFactory.SetLayoutElement(description.gameObject, minWidth: WIDTH_LONG, minHeight: ROW_HEIGHT);

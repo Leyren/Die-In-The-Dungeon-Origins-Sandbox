@@ -1,5 +1,4 @@
 ﻿using DieInTheDungeonOriginsSandbox.UI.Widgets;
-using DieInTheDungeonOriginsSandbox.UI;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -10,6 +9,7 @@ using UnityEngine.UI;
 using MEC;
 using System.Linq;
 using System.Reflection;
+using DieInTheDungeonSandbox.Core;
 
 namespace DieInTheDungeonOriginsSandbox.Components
 {
@@ -22,23 +22,23 @@ namespace DieInTheDungeonOriginsSandbox.Components
 
         private void InitializeUI()
         {
-            GameObject container = PluginUI.CreateSimpleHorizontalLayout(_panelRoot);
-            PluginUI.CreateButton(container, "Open Upgrade Menu", onClick: OpenDiceUpgradeMenu);
-            PluginUI.CreateButton(container, "Upgrade All Dices", onClick: UpgradeAllDices);
+            GameObject container = UIUtil.CreateSimpleHorizontalLayout(_panelRoot);
+            UIUtil.CreateButton(container, "Open Upgrade Menu", onClick: OpenDiceUpgradeMenu);
+            UIUtil.CreateButton(container, "Upgrade All Dices", onClick: UpgradeAllDices);
 
-            container = PluginUI.CreateSimpleHorizontalLayout(_panelRoot);
-            PluginUI.CreateButton(container, "Open Discard Menu", onClick: OpenDiceDiscardMenu);
-            PluginUI.CreateButton(container, "Get Random Dice", onClick: GetRandomDice);
+            container = UIUtil.CreateSimpleHorizontalLayout(_panelRoot);
+            UIUtil.CreateButton(container, "Open Discard Menu", onClick: OpenDiceDiscardMenu);
+            UIUtil.CreateButton(container, "Get Random Dice", onClick: GetRandomDice);
             new DropdownWidget<DiceData>(_panelRoot, "Add Dice", GetAllDices().ToArray(), d => d.ToString(), GetSelectedDice);
             new DropdownWidget<DiceData.Property>(_panelRoot, "Add Property to Dice", GetAllProperties(), d => d.ToString(), OpenGrantPropertyMenu);
         }
 
         private static bool CanModifyDices()
         {
-            return FloorSystem.Instance.battle.CurrentTurnState == BattleSystem.TurnState.SelectDice
+            return CanvasManager.Instance.eventsUI.IsOpen 
+                || FloorSystem.Instance.battle.CurrentTurnState == BattleSystem.TurnState.SelectDice
                 || FloorSystem.Instance.battle.CurrentTurnState == BattleSystem.TurnState.SelectReward;
         }
-
 
         public static void OpenDiceUpgradeMenu()
         {
@@ -105,7 +105,8 @@ namespace DieInTheDungeonOriginsSandbox.Components
 
         private static void RedrawDicesIfNeeded()
         {
-            if (FloorSystem.Instance.battle.CurrentTurnState == BattleSystem.TurnState.SelectDice)
+            // Note: The EventUI check should not be needed here, but when force-skipping a floor, the state is in 'SelectDice' even when it triggers an event.
+            if (FloorSystem.Instance.battle.CurrentTurnState == BattleSystem.TurnState.SelectDice && !CanvasManager.Instance.eventsUI.IsOpen)
             {
                 Timing.RunCoroutine(DiceManager.Instance._DrawDiceToHand());
             }

@@ -11,6 +11,6 @@ namespace DieInTheDungeonOriginsSandbox.Core
         internal static bool Invulnerable = false;
         internal static bool ForceKill = false;
         internal static bool UnlimitedDeck = false;
-
+        internal static bool AutoWinEventRolls = false;
     }
 }
