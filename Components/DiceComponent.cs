@@ -12,23 +12,17 @@ namespace DieInTheDungeonOriginsSandbox.Components
 {
     internal class DiceComponent : PluginComponent
     {
-        public DiceComponent(GameObject panelRoot) : base(panelRoot)
+        public DiceComponent(GameObject parent) : base(parent, "Dices")
         {
             InitializeUI();
         }
 
         private void InitializeUI()
         {
-            UIFactory.CreatePanel("Dice-component", _panelRoot, out var contentHolder);
-            var layout = contentHolder.GetComponent<VerticalLayoutGroup>();
-            layout.childControlHeight = false;
-            layout.childForceExpandHeight = false;
-            layout.childForceExpandWidth = false;
-            UIFactory.CreateLabel(contentHolder, "dice-component-title", "Change Dices", fontSize: 18);
-            PluginUI.CreateButton(contentHolder, "Dice Upgrade Menu", onClick: CheatActions.OpenDiceUpgradeMenu);
-            PluginUI.CreateButton(contentHolder, "Upgrade All Dices", onClick: CheatActions.UpgradeAllDices);
-            PluginUI.CreateButton(contentHolder, "Get Random Dice", onClick: CheatActions.GetRandomDice);
-            new DropdownWidget<DiceData>(contentHolder, "Add Dice", CheatActions.GetAllDices().ToArray(), d => d.ToString(), CheatActions.GetSelectedDice);
+            PluginUI.CreateButton(_panelRoot, "Dice Upgrade Menu", onClick: CheatActions.OpenDiceUpgradeMenu);
+            PluginUI.CreateButton(_panelRoot, "Upgrade All Dices", onClick: CheatActions.UpgradeAllDices);
+            PluginUI.CreateButton(_panelRoot, "Get Random Dice", onClick: CheatActions.GetRandomDice);
+            new DropdownWidget<DiceData>(_panelRoot, "Add Dice", CheatActions.GetAllDices().ToArray(), d => d.ToString(), CheatActions.GetSelectedDice);
         }
     }
 }

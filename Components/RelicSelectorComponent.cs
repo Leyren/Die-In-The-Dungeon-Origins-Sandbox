@@ -13,7 +13,7 @@ namespace DieInTheDungeonOriginsSandbox.Components
 
         private RectTransform RelicSelectorLayoutRect;
 
-        public RelicSelectorComponent(GameObject panelRoot): base(panelRoot) {
+        public RelicSelectorComponent(GameObject parent): base(parent, "Relics") {
             InitializeUI();
         }
 

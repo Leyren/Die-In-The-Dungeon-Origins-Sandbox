@@ -7,6 +7,9 @@ using UniverseLib.UI;
 using UnityEngine;
 using DieInTheDungeonOriginsSandbox.UI.Widgets;
 using DieInTheDungeonOriginsSandbox.Components;
+using System.ComponentModel;
+using UnityEngine.UI;
+using static DeckData;
 
 namespace DieInTheDungeonOriginsSandbox.UI
 {
@@ -40,10 +43,15 @@ namespace DieInTheDungeonOriginsSandbox.UI
 
         protected override void ConstructPanelContent()
         {
-            components.Add(new StatModifierComponent(ContentRoot));
-            components.Add(new CombatTogglesComponent(ContentRoot));
-            components.Add(new RelicSelectorComponent(ContentRoot));
-            components.Add(new DiceComponent(ContentRoot));
+           GameObject scrollObj = UIFactory.CreateScrollView(ContentRoot, "root-scroll-view", out var container, out var Scrollbar, color: PluginUI.BACKGROUND_COLOR);
+
+            UIFactory.SetLayoutElement(scrollObj, minHeight: 250, preferredHeight: 300, flexibleHeight: 9999, flexibleWidth: 9999);
+            UIFactory.SetLayoutGroup<VerticalLayoutGroup>(container, spacing: 5, padTop: 5, padBottom: 5, padLeft: 5, padRight: 5);
+
+            components.Add(new StatModifierComponent(container));
+            components.Add(new CombatModificationComponent(container));
+            components.Add(new RelicSelectorComponent(container));
+            components.Add(new DiceComponent(container));
         }
 
         override public void Update()

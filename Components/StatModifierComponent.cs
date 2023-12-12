@@ -12,7 +12,7 @@ namespace DieInTheDungeonOriginsSandbox.Components
     {
         private readonly List<Widget> widgets = [];
 
-        public StatModifierComponent(GameObject panelRoot) : base(panelRoot)
+        public StatModifierComponent(GameObject parent) : base(parent, "Stats")
         {
             InitializeUI();
         }

@@ -5,13 +5,14 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
+using UnityEngine.UI;
 using UniverseLib.UI;
 
 namespace DieInTheDungeonOriginsSandbox.Components
 {
-    internal class CombatTogglesComponent : PluginComponent
+    internal class CombatModificationComponent : PluginComponent
     {
-        public CombatTogglesComponent(GameObject panelRoot) : base(panelRoot)
+        public CombatModificationComponent(GameObject parent) : base(parent, "Combat")
         {
             InitializeUI();
         }

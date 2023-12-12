@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DieInTheDungeonOriginsSandbox.Core;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
@@ -18,6 +19,8 @@ namespace DieInTheDungeonOriginsSandbox.UI
         public const int WIDTH_SMALL = 50;
         public const int ROW_HEIGHT = 25;
         public static readonly Color DEFAULT_COLOR = new(0.25f, 0.25f, 0.25f);
+        public static readonly Color BACKGROUND_COLOR = new(0.065f, 0.065f, 0.065f);
+        public static readonly Color PANEL_COLOR = BACKGROUND_COLOR.Mix(Color.white, 0.1f);
 
         public static ButtonRef CreateButton(GameObject parent, string text, int w = WIDTH_LONG, int h = ROW_HEIGHT, Action onClick = null, Color? overrideColor = null)
         {
