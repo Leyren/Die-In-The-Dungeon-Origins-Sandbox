@@ -8,9 +8,11 @@ using JetBrains.Annotations;
 using MEC;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Transactions;
 using System.Xml.Schema;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.PlayerLoop;
 using UnityEngine.UI;
 using UniverseLib;
@@ -28,6 +30,7 @@ public class Plugin : BaseUnityPlugin
     public static UIBase UIBase { get; private set; }
 
     private CheatPanel panel;
+    private GameObject toggleButton;
 
     private static KeyCode hotkey;
 
@@ -58,29 +61,37 @@ public class Plugin : BaseUnityPlugin
 
     void UpdateUI()
     {
+        if (panel != null && panel.Enabled && !PluginUtil.IsGamePlaying())
+        {
+            panel.SetActive(false);
+        }
+
         if (PluginUtil.IsGamePlaying())
         {
             if (panel == null)
             {
+                // Initialization
                 Plugin.Log.LogInfo("Initialized Cheat Panel");
                 panel = new CheatPanel(UIBase);
                 panel.SetActive(false);
-                CreateToggleButton();
+                toggleButton = CreateToggleButton();
             }
 
-            if (panel != null)
-            {
-                if (panel.Enabled) panel.Update();
+            toggleButton.SetActive(!panel.Enabled);
 
-                if (Input.GetKeyDown(hotkey))
-                {
-                    panel.Toggle();
-                }
+            if (panel.Enabled)
+            {
+                panel.Update();
+            }
+
+            if (Input.GetKeyDown(hotkey))
+            {
+                panel.Toggle();
             }
         }
     }
 
-    public void CreateToggleButton()
+    public GameObject CreateToggleButton()
     {
         GameObject container = UIFactory.CreateHorizontalGroup(UIBase.RootObject, $"{name}-horizontal", true, true, true, true, spacing: 5, padding: new Vector4(0, 5, 5, 5));
 
@@ -102,13 +113,13 @@ public class Plugin : BaseUnityPlugin
         // If button clicked, enable the panel, and if the panel closes, enable the button
         button.OnClick = () =>
         {
-            Plugin.Log.LogInfo("Click");
-            panel.SetActive(true);
+            panel.SetActive(true); 
+            // Change focus to panel to make sure button is not in focus anymore
+            EventSystem.current.SetSelectedGameObject(panel.UIRoot);
             container.SetActive(false);
-        };
+        }; 
 
-        panel.OnPanelOpened += () => container.SetActive(false);
-        panel.OnPanelClosed = () => container.SetActive(true);
+        return container;
     }
 
 }
