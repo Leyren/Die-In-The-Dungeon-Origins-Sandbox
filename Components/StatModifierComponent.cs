@@ -119,7 +119,6 @@ namespace DieInTheDungeonOriginsSandbox.Components
         public static void ModifyEnemyBlockBy(int amount)
         {
             var battle = FloorSystem.Instance.battle;
-            var player = FloorSystem.Instance.Player;
             var enemy = battle.battleInfo.CurrentTargetEnemy;
             enemy.ChangeBlock(amount);
         }

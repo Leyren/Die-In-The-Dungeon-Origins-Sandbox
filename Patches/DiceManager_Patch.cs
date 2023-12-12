@@ -15,7 +15,6 @@ namespace DieInTheDungeonOriginsSandbox.Patches
         static void MaxDiceInHand_Postfix(ref int __result)
         {
             __result += PatchData.MaxDiceInHandModifier;
-            //Plugin.Log.LogDebug("DiceManager.MaxDiceInHand - Postfix " + __result);
         }
     }
 }
