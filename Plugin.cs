@@ -38,10 +38,7 @@ public class Plugin : BaseUnityPlugin
 
         UniverseLib.Universe.Init(OnUIInitialized);
 
-        hotkey = Config.Bind<KeyCode>("General",
-                                "GreetingText",
-                                KeyCode.F8,
-                                "A greeting text to show when the game is launched").Value;
+        hotkey = Config.Bind<KeyCode>("General", "Hotkey", KeyCode.F6, "Hotkey to open / close the sandbox").Value;
 
         var harmony = new Harmony("leyren.dieinthedungeons");
         harmony.PatchAll();
@@ -72,6 +69,11 @@ public class Plugin : BaseUnityPlugin
         if (panel != null)
         {
             panel.Update();
+
+            if (Input.GetKeyDown(hotkey))
+            {
+                panel.Toggle();
+            }
         }
     }
 
@@ -91,18 +93,19 @@ public class Plugin : BaseUnityPlugin
         rect.pivot = new Vector2(0.5f, 1);
         rect.anchoredPosition = new Vector2(0, 0);
 
-        var button = PluginUI.CreateButton(container, $"Open Sandbox (Foobar)", w: 125, h: 25, overrideColor: new Color(0.5f, 0.5f, 0.5f));
+        var button = PluginUI.CreateButton(container, $"Open Sandbox ({hotkey})", w: 175, h: 25, overrideColor: new Color(0.5f, 0.5f, 0.5f));
         button.Component.image.color = Color.red;
 
         // If button clicked, enable the panel, and if the panel closes, enable the button
         button.OnClick = () =>
         {
+            Plugin.Log.LogInfo("Click");
             panel.SetActive(true);
             container.SetActive(false);
         };
 
-        panel.OnToggleEnabled += (v) => { container.SetActive(v); };
-        panel.OnPanelClosed = () => { container.SetActive(true); };
+        panel.OnPanelOpened += () => container.SetActive(false);
+        panel.OnPanelClosed = () => container.SetActive(true);
     }
 
 }
