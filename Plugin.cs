@@ -3,6 +3,7 @@ using BepInEx.Logging;
 using DG.Tweening;
 using DieInTheDungeonOriginsSandbox.Core;
 using DieInTheDungeonOriginsSandbox.UI;
+using DieInTheDungeonSandbox.Core;
 using HarmonyLib;
 using JetBrains.Annotations;
 using MEC;
@@ -22,17 +23,15 @@ using UniverseLib.Utility;
 
 namespace DieInTheDungeonOriginsSandbox;
 
-[BepInPlugin("leyren.dieinthedungeons.Plugin", "DieInTheDungeonsSandbox", "1.0.0")]
+[BepInPlugin("leyren.dieinthedungeons.sandbox", "DieInTheDungeonsSandbox", "1.0.0")]
 public class Plugin : BaseUnityPlugin
 {
 
-    internal static new ManualLogSource Log;
+    internal static ManualLogSource Log;
     public static UIBase UIBase { get; private set; }
 
     private CheatPanel panel;
     private GameObject toggleButton;
-
-    private static KeyCode hotkey;
 
     private void Awake()
     {
@@ -41,7 +40,7 @@ public class Plugin : BaseUnityPlugin
 
         UniverseLib.Universe.Init(OnUIInitialized);
 
-        hotkey = Config.Bind<KeyCode>("General", "Hotkey", KeyCode.F6, "Hotkey to open / close the sandbox").Value;
+        PluginConfig.ReadConfig(Config);
 
         var harmony = new Harmony("leyren.dieinthedungeons");
         harmony.PatchAll();
@@ -74,17 +73,20 @@ public class Plugin : BaseUnityPlugin
                 Plugin.Log.LogInfo("Initialized Cheat Panel");
                 panel = new CheatPanel(UIBase);
                 panel.SetActive(false);
-                toggleButton = CreateToggleButton();
+                if (PluginConfig.ShowButton)
+                {
+                    toggleButton = CreateToggleButton();
+                }
             }
 
-            toggleButton.SetActive(!panel.Enabled);
+            toggleButton?.SetActive(!panel.Enabled);
 
             if (panel.Enabled)
             {
                 panel.Update();
             }
 
-            if (Input.GetKeyDown(hotkey))
+            if (Input.GetKeyDown(PluginConfig.Hotkey))
             {
                 panel.Toggle();
             }
@@ -107,7 +109,7 @@ public class Plugin : BaseUnityPlugin
         rect.pivot = new Vector2(0.5f, 1);
         rect.anchoredPosition = new Vector2(0, 0);
 
-        var button = PluginUI.CreateButton(container, $"Open Sandbox ({hotkey})", w: 175, h: 25, overrideColor: new Color(0.5f, 0.5f, 0.5f));
+        var button = PluginUI.CreateButton(container, $"Open Sandbox ({PluginConfig.Hotkey})", w: 175, h: 25, overrideColor: new Color(0.5f, 0.5f, 0.5f));
         button.Component.image.color = Color.red;
 
         // If button clicked, enable the panel, and if the panel closes, enable the button

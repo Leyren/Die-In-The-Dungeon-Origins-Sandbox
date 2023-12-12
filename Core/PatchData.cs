@@ -10,6 +10,7 @@ namespace DieInTheDungeonOriginsSandbox.Core
         internal static int MaxDiceInHandModifier = 0;
         internal static bool Invulnerable = false;
         internal static bool ForceKill = false;
+        internal static bool UnlimitedDeck = false;
 
     }
 }

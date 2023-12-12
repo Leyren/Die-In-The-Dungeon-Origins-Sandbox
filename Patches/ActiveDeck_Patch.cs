@@ -1,5 +1,6 @@
 ﻿using DieInTheDungeonOriginsSandbox;
 using DieInTheDungeonOriginsSandbox.Core;
+using DieInTheDungeonSandbox.Core;
 using HarmonyLib;
 using System;
 using System.Collections.Generic;
@@ -12,10 +13,9 @@ namespace DieInTheDungeonSandbox.Patches {
     {
         [HarmonyPostfix]
         [HarmonyPatch(nameof(ActiveDeck.IsFull))]
-        static void MaxDiceInHand_Postfix(ActiveDeck __instance, ref bool __result)
+        static void MaxDiceInHand_Postfix(ref bool __result)
         {
-            Plugin.Log.LogInfo("Current dices: " + __instance.dice.Count);
-            __result = false;
+            if (PatchData.UnlimitedDeck) __result = false;
         }
     }
 }
