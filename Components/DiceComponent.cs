@@ -6,6 +6,7 @@ using System.Text;
 using UnityEngine;
 using UniverseLib.UI;
 using DieInTheDungeonOriginsSandbox.Core;
+using UnityEngine.UI;
 
 namespace DieInTheDungeonOriginsSandbox.Components
 {
@@ -18,12 +19,16 @@ namespace DieInTheDungeonOriginsSandbox.Components
 
         private void InitializeUI()
         {
-            UIFactory.CreatePanel("Dice-component", _panelRoot, out var contentholder);
-            UIFactory.CreateLabel(contentholder, "dice-component-title", "Change Dices", fontSize: 18);
-            PluginUI.CreateButton(contentholder, "Dice Upgrade Menu", onClick: CheatActions.OpenDiceUpgradeMenu);
-            PluginUI.CreateButton(contentholder, "Upgrade All Dices", onClick: CheatActions.UpgradeAllDices);
-            PluginUI.CreateButton(contentholder, "Get Random Dice", onClick: CheatActions.GetRandomDice);
-            new DropdownWidget<DiceData>(contentholder, "Add Dice", CheatActions.GetAllDices().ToArray(), d => d.ToString(), CheatActions.GetSelectedDice);
+            UIFactory.CreatePanel("Dice-component", _panelRoot, out var contentHolder);
+            var layout = contentHolder.GetComponent<VerticalLayoutGroup>();
+            layout.childControlHeight = false;
+            layout.childForceExpandHeight = false;
+            layout.childForceExpandWidth = false;
+            UIFactory.CreateLabel(contentHolder, "dice-component-title", "Change Dices", fontSize: 18);
+            PluginUI.CreateButton(contentHolder, "Dice Upgrade Menu", onClick: CheatActions.OpenDiceUpgradeMenu);
+            PluginUI.CreateButton(contentHolder, "Upgrade All Dices", onClick: CheatActions.UpgradeAllDices);
+            PluginUI.CreateButton(contentHolder, "Get Random Dice", onClick: CheatActions.GetRandomDice);
+            new DropdownWidget<DiceData>(contentHolder, "Add Dice", CheatActions.GetAllDices().ToArray(), d => d.ToString(), CheatActions.GetSelectedDice);
         }
     }
 }

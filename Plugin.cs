@@ -29,6 +29,8 @@ public class Plugin : BaseUnityPlugin
 
     private CheatPanel panel;
 
+    private static KeyCode hotkey;
+
     private void Awake()
     {
         Plugin.Log = base.Logger;
@@ -36,12 +38,10 @@ public class Plugin : BaseUnityPlugin
 
         UniverseLib.Universe.Init(OnUIInitialized);
 
-        // required to ensure that it is initialized before harmony patches it. this is required since Hit has a static member instance of itself
-        // which would already call the patched methods in its constructor, before the patch was applied.
-       /* System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(Attack).TypeHandle);
-        System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(Hit).TypeHandle);
-
-        var a = Attack.ForceKill;*/
+        hotkey = Config.Bind<KeyCode>("General",
+                                "GreetingText",
+                                KeyCode.F8,
+                                "A greeting text to show when the game is launched").Value;
 
         var harmony = new Harmony("leyren.dieinthedungeons");
         harmony.PatchAll();
@@ -65,6 +65,8 @@ public class Plugin : BaseUnityPlugin
         {
             Plugin.Log.LogInfo("Initialized Cheat Panel");
             panel = new CheatPanel(UIBase);
+            panel.SetActive(false);
+            CreateToggleButton();
         }
 
         if (panel != null)
@@ -72,5 +74,36 @@ public class Plugin : BaseUnityPlugin
             panel.Update();
         }
     }
+
+    public void CreateToggleButton()
+    {
+        GameObject container = UIFactory.CreateHorizontalGroup(UIBase.RootObject, $"{name}-horizontal", true, true, true, true, spacing: 5, padding: new Vector4(0, 5, 5, 5));
+
+        // Add a content size fitter to adjust the size based on the containing button
+        var fitter = container.AddComponent<ContentSizeFitter>();
+        fitter.horizontalFit = ContentSizeFitter.FitMode.MinSize;
+        fitter.verticalFit = ContentSizeFitter.FitMode.MinSize;
+        var rect = container.GetComponent<RectTransform>();
+
+        // move to top center
+        rect.anchorMin = new Vector2(0.5f, 1);
+        rect.anchorMax = new Vector2(0.5f, 1);
+        rect.pivot = new Vector2(0.5f, 1);
+        rect.anchoredPosition = new Vector2(0, 0);
+
+        var button = PluginUI.CreateButton(container, $"Open Sandbox (Foobar)", w: 125, h: 25, overrideColor: new Color(0.5f, 0.5f, 0.5f));
+        button.Component.image.color = Color.red;
+
+        // If button clicked, enable the panel, and if the panel closes, enable the button
+        button.OnClick = () =>
+        {
+            panel.SetActive(true);
+            container.SetActive(false);
+        };
+
+        panel.OnToggleEnabled += (v) => { container.SetActive(v); };
+        panel.OnPanelClosed = () => { container.SetActive(true); };
+    }
+
 }
 

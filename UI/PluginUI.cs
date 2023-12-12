@@ -17,13 +17,16 @@ namespace DieInTheDungeonOriginsSandbox.UI
         public const int WIDTH_MEDIUM = 100;
         public const int WIDTH_SMALL = 50;
         public const int ROW_HEIGHT = 25;
+        public static readonly Color DEFAULT_COLOR = new(0.25f, 0.25f, 0.25f);
 
-        public static ButtonRef CreateButton(GameObject parent, string text, int w = WIDTH_LONG, int h = ROW_HEIGHT, Action onClick = null)
+        public static ButtonRef CreateButton(GameObject parent, string text, int w = WIDTH_LONG, int h = ROW_HEIGHT, Action onClick = null, Color? overrideColor = null)
         {
             var button = UIFactory.CreateButton(parent, text, text);
-            UIFactory.SetLayoutElement(button.GameObject, minWidth: w, minHeight: h);
+            var rect = button.Component.GetComponent<RectTransform>();
+            rect.sizeDelta = new Vector2(w, h);
+            UIFactory.SetLayoutElement(button.GameObject, minWidth: w, minHeight: h, preferredWidth: w, preferredHeight: h);
 
-            Color baseColor = new(0.25f, 0.25f, 0.25f);
+            Color baseColor = overrideColor.HasValue ? overrideColor.Value : DEFAULT_COLOR;
             ColorBlock cb = new()
             {
                 normalColor = baseColor,

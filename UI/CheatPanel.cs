@@ -23,6 +23,15 @@ namespace DieInTheDungeonOriginsSandbox.UI
 
         private readonly List<PluginComponent> components = [];
 
+        public Action OnPanelClosed;
+
+        protected override void OnClosePanelClicked()
+        {
+            base.OnClosePanelClicked();
+            // Note: UIModel has OnToggleEnabled, but that is often not called since changes via SetActive don't trigger it. 
+            OnPanelClosed.Invoke();
+        }
+
         protected override void ConstructPanelContent()
         {
             components.Add(new StatModifierComponent(ContentRoot));
