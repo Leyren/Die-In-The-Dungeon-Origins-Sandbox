@@ -1,10 +1,12 @@
 ﻿using DieInTheDungeonOriginsSandbox.UI;
+using DieInTheDungeonOriginsSandbox.UI.Widgets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using UnityEngine;
+using UniverseLib.UI;
 
 namespace DieInTheDungeonOriginsSandbox.Components
 {
@@ -19,8 +21,9 @@ namespace DieInTheDungeonOriginsSandbox.Components
 
         private void InitializeUI()
         {
-            PluginUI.CreateButton(_panelRoot, "Open Relic Selection", onClick: OpenRelicSelector);
-            PluginUI.CreateButton(_panelRoot, "Get All Relics", onClick: ObtainAllRelics);
+            GameObject container = PluginUI.CreateSimpleHorizontalLayout(_panelRoot);
+            PluginUI.CreateButton(container, "Open Relic Selection", onClick: OpenRelicSelector);
+            PluginUI.CreateButton(container, "Get All Relics", onClick: ObtainAllRelics);
         }
 
         public override void Update()
@@ -49,11 +52,13 @@ namespace DieInTheDungeonOriginsSandbox.Components
 
         private void ObtainAllRelics()
         {
+            Plugin.Log.LogInfo($"Obtain all relics...");
             GetAllRelics().ForEach(Relics.Instance.AddRelic);
         }
 
         private void OpenRelicSelector()
         {
+            Plugin.Log.LogInfo($"Opening relic selector");
             var allRelics = GetAllRelics();
             CanvasManager.Instance.relicSelector.ShowRelicsFromThisPool(allRelics, allRelics.Count, (v) => DisableLayoutModifications());
             RelicSelectorLayoutRect = CanvasManager.Instance.relicSelector.layoutRT;
@@ -61,7 +66,7 @@ namespace DieInTheDungeonOriginsSandbox.Components
 
         private void DisableLayoutModifications()
         {
-            Plugin.Log.LogInfo("Reset RelicSelectorLayoutRect");
+            Plugin.Log.LogDebug("Reset RelicSelectorLayoutRect");
             RelicSelectorLayoutRect.localPosition = Vector3.zero;
             RelicSelectorLayoutRect = null;
         }

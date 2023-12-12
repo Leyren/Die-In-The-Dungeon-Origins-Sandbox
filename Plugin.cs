@@ -20,7 +20,7 @@ using UniverseLib.Utility;
 
 namespace DieInTheDungeonOriginsSandbox;
 
-[BepInPlugin(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION)]
+[BepInPlugin("leyren.dieinthedungeons.Plugin", "DieInTheDungeonsSandbox", "1.0.0")]
 public class Plugin : BaseUnityPlugin
 {
 
@@ -44,7 +44,7 @@ public class Plugin : BaseUnityPlugin
         harmony.PatchAll();
 
         // Plugin startup logic
-        Logger.LogInfo($"Plugin {MyPluginInfo.PLUGIN_GUID} is loaded!");
+        Logger.LogInfo($"Plugin is loaded!");
     }
 
     private void OnUIInitialized()
@@ -58,21 +58,24 @@ public class Plugin : BaseUnityPlugin
 
     void UpdateUI()
     {
-        if (panel == null && PluginUtil.IsGamePlaying())
+        if (PluginUtil.IsGamePlaying())
         {
-            Plugin.Log.LogInfo("Initialized Cheat Panel");
-            panel = new CheatPanel(UIBase);
-            panel.SetActive(false);
-            CreateToggleButton();
-        }
-
-        if (panel != null)
-        {
-            panel.Update();
-
-            if (Input.GetKeyDown(hotkey))
+            if (panel == null)
             {
-                panel.Toggle();
+                Plugin.Log.LogInfo("Initialized Cheat Panel");
+                panel = new CheatPanel(UIBase);
+                panel.SetActive(false);
+                CreateToggleButton();
+            }
+
+            if (panel != null)
+            {
+                if (panel.Enabled) panel.Update();
+
+                if (Input.GetKeyDown(hotkey))
+                {
+                    panel.Toggle();
+                }
             }
         }
     }

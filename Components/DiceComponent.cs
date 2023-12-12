@@ -19,9 +19,12 @@ namespace DieInTheDungeonOriginsSandbox.Components
 
         private void InitializeUI()
         {
-            PluginUI.CreateButton(_panelRoot, "Dice Upgrade Menu", onClick: CheatActions.OpenDiceUpgradeMenu);
-            PluginUI.CreateButton(_panelRoot, "Upgrade All Dices", onClick: CheatActions.UpgradeAllDices);
-            PluginUI.CreateButton(_panelRoot, "Get Random Dice", onClick: CheatActions.GetRandomDice);
+            GameObject container = PluginUI.CreateSimpleHorizontalLayout(_panelRoot);
+            PluginUI.CreateButton(container, "Dice Upgrade Menu", onClick: CheatActions.OpenDiceUpgradeMenu);
+            PluginUI.CreateButton(container, "Upgrade All Dices", onClick: CheatActions.UpgradeAllDices);
+
+            container = PluginUI.CreateSimpleHorizontalLayout(_panelRoot);
+            PluginUI.CreateButton(container, "Get Random Dice", onClick: CheatActions.GetRandomDice);
             new DropdownWidget<DiceData>(_panelRoot, "Add Dice", CheatActions.GetAllDices().ToArray(), d => d.ToString(), CheatActions.GetSelectedDice);
         }
     }

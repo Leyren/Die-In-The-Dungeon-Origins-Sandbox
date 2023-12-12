@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34330.188
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DieInTheDungeonOriginsSandbox", "DieInTheDungeonOriginsSandbox.csproj", "{43D44083-A8E7-433A-8A87-98F209BE9F05}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DieInTheDungeonSandbox", "DieInTheDungeonSandbox.csproj", "{43D44083-A8E7-433A-8A87-98F209BE9F05}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

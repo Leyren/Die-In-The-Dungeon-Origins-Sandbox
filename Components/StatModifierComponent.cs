@@ -24,6 +24,11 @@ namespace DieInTheDungeonOriginsSandbox.Components
                 retrieveData: () => GetMaxDiceInHand().ToString()
             ));
 
+            widgets.Add(new ModificationWidget<int>("energy", _panelRoot, "Modify Energy by", 0,
+                applyModification: ModifyEnergyBy,
+                retrieveData: () => GetEnergy().ToString()
+            ));
+
             widgets.Add(new ModificationWidget<int>("max-health", _panelRoot, "Modify Max Health by", 0,
                 applyModification: ModifyMaxHealthBy,
                 retrieveData: () => GetMaxHealth().ToString()
@@ -37,6 +42,16 @@ namespace DieInTheDungeonOriginsSandbox.Components
             widgets.Add(new ModificationWidget<int>("block", _panelRoot, "Modify Block by", 0,
                 applyModification: ModifyBlockBy,
                 retrieveData: () => GetBlock().ToString()
+            ));
+
+            widgets.Add(new ModificationWidget<int>("enemy-heal", _panelRoot, "Modify Enemy Health by", 0,
+                applyModification: ModifyEnemyHealthBy,
+                retrieveData: () => GetCurrentEnemyHealth().ToString()
+            ));
+
+            widgets.Add(new ModificationWidget<int>("enemy-block", _panelRoot, "Modify Enemy Block by", 0,
+                applyModification: ModifyEnemyBlockBy,
+                retrieveData: () => GetCurrentEnemyBlock().ToString()
             ));
         }
 
@@ -77,6 +92,38 @@ namespace DieInTheDungeonOriginsSandbox.Components
             FloorSystem.Instance.Player.ChangeBlock(amount);
         }
 
+        public static void ModifyEnergyBy(int amount)
+        {
+            DiceManager.Instance.CurrentEnergy += amount;
+        }
+
+        public static void ModifyEnemyHealthBy(int amount)
+        {
+            var battle = FloorSystem.Instance.battle;
+            var player = FloorSystem.Instance.Player;
+            var enemy = battle.battleInfo.CurrentTargetEnemy;
+            if (amount > 0)
+            {
+                enemy.Heal(amount);
+            }
+            else
+            {
+                enemy.Damage(new Hit(-amount, attacker: player), in player.AudioEntity.combatAttackHitSFX);
+                if (enemy.IsDead)
+                {
+                    battle.StartBattleActions();
+                }
+            }
+        }
+
+        public static void ModifyEnemyBlockBy(int amount)
+        {
+            var battle = FloorSystem.Instance.battle;
+            var player = FloorSystem.Instance.Player;
+            var enemy = battle.battleInfo.CurrentTargetEnemy;
+            enemy.ChangeBlock(amount);
+        }
+
         public static int GetMaxHealth()
         {
             return FloorSystem.Instance.Player.MaxHealth;
@@ -92,5 +139,18 @@ namespace DieInTheDungeonOriginsSandbox.Components
             return FloorSystem.Instance.Player.CurrentBlock;
         }
 
+        public static int GetEnergy()
+        {
+            return DiceManager.Instance.CurrentEnergy;
+        }
+
+        public static int GetCurrentEnemyHealth()
+        {
+            return FloorSystem.Instance.battle.battleInfo.CurrentTargetEnemy.CurrentHealth;
+        }
+        public static int GetCurrentEnemyBlock()
+        {
+            return FloorSystem.Instance.battle.battleInfo.CurrentTargetEnemy.CurrentBlock;
+        }
     }
 }

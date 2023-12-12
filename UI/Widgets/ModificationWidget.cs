@@ -18,9 +18,7 @@ namespace DieInTheDungeonOriginsSandbox.UI.Widgets
 
         public ModificationWidget(string name, GameObject parent, string title, T defaultValue, Action<T> applyModification, Func<string> retrieveData = null, Func<T, T> validateInput = null)
         {
-            GameObject container = UIFactory.CreateHorizontalGroup(parent, $"{name}-horizontal", false, false, true, true, spacing: 5, padding: new Vector4(5, 10, 5, 10));
-           // var fitter = container.AddComponent<ContentSizeFitter>();
-           // fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+            GameObject container = PluginUI.CreateSimpleHorizontalLayout(parent, $"{name}-horizontal");
 
             Text description = UIFactory.CreateLabel(container, $"{name}-title", title);
             UIFactory.SetLayoutElement(description.gameObject, minWidth: WIDTH_LONG, minHeight: ROW_HEIGHT);

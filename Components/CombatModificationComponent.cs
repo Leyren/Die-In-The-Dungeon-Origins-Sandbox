@@ -18,9 +18,22 @@ namespace DieInTheDungeonOriginsSandbox.Components
         }
         private void InitializeUI()
         {
-            GameObject container = UIFactory.CreateHorizontalGroup(_panelRoot, $"combat-toggles-horizontal", false, false, true, true, spacing: 5, padding: new Vector4(5, 10, 5, 10));
+            GameObject container = PluginUI.CreateSimpleHorizontalLayout(_panelRoot);
             new ToggleWidget(container, "Invulnerable", (v) => PatchData.Invulnerable = v);
             new ToggleWidget(container, "Force Kill", (v) => PatchData.ForceKill = v);
+
+            container = PluginUI.CreateSimpleHorizontalLayout(_panelRoot);
+            PluginUI.CreateButton(container, "Kill selected enemy", onClick: KillSelectedEnemy);
+            PluginUI.CreateButton(container, "Kill all enemies", onClick: KillAllEnemies);
+        }
+
+        private void KillAllEnemies()
+        {
+            FloorSystem.Instance.battle.DebugKillAllEnemies();
+        }
+        private void KillSelectedEnemy()
+        {
+            FloorSystem.Instance.battle.DebugKillSelectedEnemy();
         }
     }
 }

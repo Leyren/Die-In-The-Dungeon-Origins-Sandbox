@@ -1,12 +1,9 @@
 ﻿using DieInTheDungeonOriginsSandbox.Core;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Text;
 using System.Xml.Linq;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.UIElements;
 using UniverseLib.UI;
 using UniverseLib.UI.Models;
 
@@ -22,6 +19,14 @@ namespace DieInTheDungeonOriginsSandbox.UI
         public static readonly Color BACKGROUND_COLOR = new(0.065f, 0.065f, 0.065f);
         public static readonly Color PANEL_COLOR = BACKGROUND_COLOR.Mix(Color.white, 0.1f);
 
+        // no expanding, no padding, no background, just horizontal layout with a small spacing
+        public static GameObject CreateSimpleHorizontalLayout(GameObject parent, string name = "horizontal")
+        {
+            GameObject container = UIFactory.CreateHorizontalGroup(parent, name, false, false, true, true, spacing: 5, padding: new Vector4(0, 0, 0, 0));
+            GameObject.Destroy(container.GetComponent<Image>());
+            return container;
+        }
+
         public static ButtonRef CreateButton(GameObject parent, string text, int w = WIDTH_LONG, int h = ROW_HEIGHT, Action onClick = null, Color? overrideColor = null)
         {
             var button = UIFactory.CreateButton(parent, text, text);
@@ -35,7 +40,7 @@ namespace DieInTheDungeonOriginsSandbox.UI
                 normalColor = baseColor,
                 highlightedColor = baseColor * 1.2f,
                 selectedColor = baseColor * 0.7f,
-                m_DisabledColor = baseColor * 0.1f,
+                disabledColor = baseColor * 0.1f,
                 colorMultiplier = 1
             };
             button.Component.colors = cb;
