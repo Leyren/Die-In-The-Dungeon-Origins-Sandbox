@@ -44,6 +44,11 @@ namespace DieInTheDungeonOriginsSandbox.Components
                 retrieveData: () => GetBlock().ToString()
             ));
 
+            widgets.Add(new ModificationWidget<int>("enemy-max-health", _panelRoot, "Modify Enemy Max. Health by", 0,
+                applyModification: ModifyEnemyMaxHealthBy,
+                retrieveData: () => GetCurrentEnemyMaxHealth().ToString()
+            ));
+
             widgets.Add(new ModificationWidget<int>("enemy-heal", _panelRoot, "Modify Enemy Health by", 0,
                 applyModification: ModifyEnemyHealthBy,
                 retrieveData: () => GetCurrentEnemyHealth().ToString()
@@ -97,6 +102,13 @@ namespace DieInTheDungeonOriginsSandbox.Components
             DiceManager.Instance.CurrentEnergy += amount;
         }
 
+        public static void ModifyEnemyMaxHealthBy(int amount)
+        {
+            var battle = FloorSystem.Instance.battle;
+            var enemy = battle.battleInfo.CurrentTargetEnemy;
+            enemy.ChangeMaxHealthWithVariation(amount);
+        }
+
         public static void ModifyEnemyHealthBy(int amount)
         {
             var battle = FloorSystem.Instance.battle;
@@ -109,9 +121,12 @@ namespace DieInTheDungeonOriginsSandbox.Components
             else
             {
                 enemy.Damage(new Hit(-amount, attacker: player), in player.AudioEntity.combatAttackHitSFX);
-                if (enemy.IsDead)
+                if (!battle.battleInfo.IsAnyEnemyLeft())
                 {
                     battle.StartBattleActions();
+                } else if (!battle.battleInfo.IsCurrentTargetValid())
+                {
+                    battle.battleInfo.ResetCurrentTargetIndex();
                 }
             }
         }
@@ -141,6 +156,10 @@ namespace DieInTheDungeonOriginsSandbox.Components
         public static int GetEnergy()
         {
             return DiceManager.Instance.CurrentEnergy;
+        }
+        public static int GetCurrentEnemyMaxHealth()
+        {
+            return FloorSystem.Instance.battle.battleInfo.CurrentTargetEnemy.MaxHealth;
         }
 
         public static int GetCurrentEnemyHealth()

@@ -10,6 +10,7 @@ using MEC;
 using System.Linq;
 using System.Reflection;
 using DieInTheDungeonSandbox.Core;
+using HarmonyLib;
 
 namespace DieInTheDungeonOriginsSandbox.Components
 {
@@ -29,6 +30,10 @@ namespace DieInTheDungeonOriginsSandbox.Components
             container = UIUtil.CreateSimpleHorizontalLayout(_panelRoot);
             UIUtil.CreateButton(container, "Open Discard Menu", onClick: OpenDiceDiscardMenu);
             UIUtil.CreateButton(container, "Get Random Dice", onClick: GetRandomDice);
+
+            container = UIUtil.CreateSimpleHorizontalLayout(_panelRoot);
+            UIUtil.CreateButton(container, "Pick Dice from Backpack", onClick: OpenTakeDiceToHand);
+
             new DropdownWidget<DiceData>(_panelRoot, "Add Dice", GetAllDices().ToArray(), d => d.ToString(), GetSelectedDice);
             new DropdownWidget<DiceData.Property>(_panelRoot, "Add Property to Dice", GetAllProperties(), d => d.ToString(), OpenGrantPropertyMenu);
         }
@@ -53,6 +58,28 @@ namespace DieInTheDungeonOriginsSandbox.Components
         public static void OpenGrantPropertyMenu(DiceData.Property property)
         {
             WrapOpenDiceMenu(() => CanvasManager.Instance.backpackUI.OpenToGrantProperty(property, maxTargetDice: 9999, onComplete: RedrawDicesIfNeeded));
+        }
+
+        public static void OpenTakeDiceToHand()
+        {
+            Plugin.Log.LogInfo("Patching BackpackUI");
+            var original = typeof(BackpackUI).GetMethod("OnClickDice", BindingFlags.NonPublic | BindingFlags.Instance);
+            var prefix = typeof(DiceComponent).GetMethod(nameof(OnClickDice_Patch), BindingFlags.NonPublic | BindingFlags.Static);
+
+            Plugin.harmony.Patch(original, new HarmonyMethod(prefix));
+            CanvasManager.Instance.backpackUI.Open(BackpackUI.OpenData.State.ShowDice, maxTargetDice: 9999, onComplete: () => {
+                Plugin.Log.LogInfo("Unpatching BackpackUI");
+                Plugin.harmony.Unpatch(original, prefix);
+            });
+        }
+
+        private static bool OnClickDice_Patch(BackpackUI __instance, DiceBoxDice dice)
+        {
+            MethodInfo method = typeof(DiceManager).GetMethod("_DrawDiceFromDrawPileToHand", BindingFlags.NonPublic | BindingFlags.Instance);
+            ActiveDice activeDice = dice.CurrentActiveDice;
+            activeDice.Roll();
+            Timing.RunCoroutine((IEnumerator<float>)method.Invoke(DiceManager.Instance, [activeDice]));
+            return false;
         }
 
         private static void WrapOpenDiceMenu(Action openAction)

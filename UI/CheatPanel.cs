@@ -19,7 +19,7 @@ namespace DieInTheDungeonOriginsSandbox.UI
         public CheatPanel(UIBase owner) : base(owner) { }
 
         public override string Name => "Sandbox";
-        public override int MinWidth => 100;
+        public override int MinWidth => 510;
         public override int MinHeight => 200;
         public override Vector2 DefaultAnchorMin => new(0.25f, 0.25f);
         public override Vector2 DefaultAnchorMax => new(0.75f, 0.75f);

@@ -10,6 +10,7 @@ using MEC;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Transactions;
 using System.Xml.Schema;
 using UnityEngine;
@@ -17,13 +18,14 @@ using UnityEngine.EventSystems;
 using UnityEngine.PlayerLoop;
 using UnityEngine.UI;
 using UniverseLib;
+using UniverseLib.Config;
 using UniverseLib.UI;
 using UniverseLib.UI.Models;
 using UniverseLib.Utility;
 
 namespace DieInTheDungeonOriginsSandbox;
 
-[BepInPlugin("leyren.dieinthedungeons.sandbox", "DieInTheDungeonsSandbox", "1.0.0")]
+[BepInPlugin("DieInTheDungeonsSandbox", "DieInTheDungeonsSandbox", "1.0.0")]
 public class Plugin : BaseUnityPlugin
 {
 
@@ -33,16 +35,18 @@ public class Plugin : BaseUnityPlugin
     private CheatPanel panel;
     private GameObject toggleButton;
 
+    internal static Harmony harmony;
+
     private void Awake()
     {
         Plugin.Log = base.Logger;
         Logger.LogInfo($"Loading plugin...");
 
-        UniverseLib.Universe.Init(OnUIInitialized);
+        UniverseLib.Universe.Init(OnUIInitialized, logHandler: (s, l) => { });
 
         PluginConfig.ReadConfig(Config);
 
-        var harmony = new Harmony("leyren.dieinthedungeons");
+        harmony = new Harmony("leyren.dieinthedungeons");
         harmony.PatchAll();
 
         // Plugin startup logic
@@ -60,6 +64,7 @@ public class Plugin : BaseUnityPlugin
 
     private bool autoReopen = false;
 
+    
     void UpdateUI()
     {
         if (panel != null && panel.Enabled && !PluginUtil.IsGamePlaying())
@@ -88,6 +93,7 @@ public class Plugin : BaseUnityPlugin
 
             if (panel.Enabled)
             {
+                ConfigManager.Force_Unlock_Mouse = Contains(Input.mousePosition, panel.Rect.position, panel.Rect.rect.size);
                 panel.Update();
             } else if (autoReopen)
             {
@@ -102,5 +108,9 @@ public class Plugin : BaseUnityPlugin
         }
     }
 
+    private static bool Contains(Vector2 pos, Vector2 lower, Vector2 size)
+    {
+        return pos.x > lower.x && pos.x < lower.x + size.x && pos.y < lower.y && pos.y > lower.y - size.y;
+    }
 }
 
